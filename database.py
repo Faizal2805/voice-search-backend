@@ -30,35 +30,26 @@ def extract_department_year(text):
             break
 
     return extracted_department, extracted_year
-
-def get_student_details(student_name):
+def get_students_by_name(student_name):
     """
-    Retrieve student details by name across multiple years.
+    Search for students using case-insensitive regex matching across multiple years.
     """
-    student_name = student_name.strip().lower()
+    student_name = student_name.strip()  # Normalize input
     year_fields = ["SECONDYEAR", "THIRDYEAR", "FOURTHYEAR"]
-    
+
+    matched_students = []
+
     for year_field in year_fields:
-        sample_doc = collection.find_one({year_field: {"$exists": True}})
+        sample_doc = collection.find_one({year_field: {"$exists": True}})  # Check if field exists
         if sample_doc and year_field in sample_doc:
-            student_records = sample_doc[year_field]
+            student_records = sample_doc[year_field]  # Extract list of students
             
+            # Perform case-insensitive regex search
             for student in student_records:
-                if "NAME" in student and student_name in student["NAME"].strip().lower():
-                    # Return only relevant student details
-                    return {
-                        "name": student.get("NAME"),
-                        "admission_no": student.get("ADMISSION NO"),
-                        "reg_no": student.get("REG NO"),
-                        "year": student.get("YEAR"),
-                        "department": student.get("DEPARTMENT"),
-                        "section": student.get("SECTION"),
-                        "room_no": student.get("ROOM NO"),
-                        "block": student.get("BLOCK"),
-                        "floor": student.get("FLOOR"),
-                        "hod_name": student.get("HOD NAME"),
-                        "hod_ph": student.get("HOD PH"),
-                        "ci_name": student.get("CI NAME"),
-                        "ci_ph": student.get("CI PH"),
-                    }
-    return None
+                if "NAME" in student and re.search(student_name, student["NAME"], re.IGNORECASE):
+                    matched_students.append({
+                        "student": student,
+                        "year": year_field
+                    })
+
+    return matched_students if matched_students else None
