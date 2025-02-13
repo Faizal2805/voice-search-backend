@@ -1,44 +1,36 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from database import get_student_details, extract_department_year
-from nlp_processing import extract_name
-import os
+from database import get_students_by_name
+import re
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Enable CORS for cross-origin requests
 
-@app.route("/")
-def home():
-    return jsonify({"message": "Voice Search Backend is Running!"})
-
-@app.route('/process_voice', methods=['POST'])
-def process_voice():
+def extract_name(text):
     """
-    Process voice input and return either student details or extracted department/year.
+    Extracts the name from user input using regex-based approach.
     """
-    data = request.get_json()
-    
-    if not data or 'text' not in data:
-        return jsonify({"error": "Try again"}), 400
+    text = text.lower()
+    match = re.search(r"(?:i am looking for|find|search for|looking for)\s+([a-zA-Z]+(?:\s[a-zA-Z]+)*)", text, re.IGNORECASE)
+    return match.group(1) if match else None
 
-    user_input = data['text']
+@app.route("/search", methods=["POST"])
+def search_student():
+    data = request.json
+    user_input = data.get("text", "").strip()
     
-    # Check if input contains a name
+    if not user_input:
+        return jsonify({"error": "Empty input received"}), 400
+    
     extracted_name = extract_name(user_input)
-    if extracted_name:
-        student_details = get_student_details(extracted_name)
-        if student_details:
-            return jsonify({"student_details": student_details})
-        return jsonify({"error": "Student not found"}), 404
-
-    # If no name is found, extract department and year
-    extracted_department, extracted_year = extract_department_year(user_input)
+    if not extracted_name:
+        return jsonify({"error": "No valid name found in input"}), 400
     
-    return jsonify({
-        "extracted_department": extracted_department,
-        "extracted_year": extracted_year
-    })
+    matched_students = get_students_by_name(extracted_name)
+    if not matched_students:
+        return jsonify({"message": "No matching student found"}), 404
+    
+    return jsonify({"students": matched_students}), 200
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 10000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(debug=True)
