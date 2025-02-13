@@ -1,25 +1,30 @@
 from pymongo import MongoClient
-import os
 
 # Connect to MongoDB
-MONGO_URI = os.getenv("MONGO_URI")  # Ensure you have set this in Render
-client = MongoClient(MONGO_URI)
+client = MongoClient("mongodb+srv://MongoVoiceAssistant1:MongoVoiceAssistant1@clusterdbvoicebot.vfdos.mongodb.net/?retryWrites=true&w=majority&appName=ClusterDbVoicebot")
 db = client["College_department"]
+collection = db["AIDS"]
 
-def get_students_by_name(name):
-    """Retrieve students from MongoDB based on a flexible name match."""
-    collection_list = ["SECONDYEAR", "THIRDYEAR", "FOURTHYEAR"]  # Modify as needed
-    students = []
-
-    # Search in each collection
-    for collection_name in collection_list:
-        collection = db["AIDS"][collection_name]  # Adjust department structure if needed
-
-        # 🔥 Perform a **case-insensitive, partial match** instead of exact match
-        query = {"name": {"$regex": f"^{name}", "$options": "i"}}  # Matches "Hari", "Hari Narayan", etc.
-        results = list(collection.find(query, {"_id": 0}))  # Exclude MongoDB Object ID
-
-        if results:
-            students.extend(results)
-
-    return students  # Returns a list of student records
+def get_students_by_name(student_name):
+    """
+    Search for students using case-insensitive substring matching across multiple years.
+    """
+    student_name = student_name.strip().lower()  # Normalize case and remove extra spaces
+    year_fields = ["SECONDYEAR", "THIRDYEAR", "FOURTHYEAR"]
+    
+    matched_students = []
+    
+    for year_field in year_fields:
+        sample_doc = collection.find_one({year_field: {"$exists": True}})  # Check if field exists
+        if sample_doc and year_field in sample_doc:
+            student_records = sample_doc[year_field]  # Extract list of students
+            
+            # Perform case-insensitive substring match (prefix, infix, midfix)
+            for student in student_records:
+                if "NAME" in student and student_name in student["NAME"].strip().lower():
+                    matched_students.append({
+                        "year": year_field,
+                        "student": student  # Full student details
+                    })
+    
+    return matched_students if matched_students else None  # Return None when no match is found
