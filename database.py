@@ -23,8 +23,8 @@ def get_students_by_name(student_name):
             for student in student_records:
                 if "NAME" in student and student_name in student["NAME"].strip().lower():
                     matched_students.append({
-                        "year": year_field,
-                        "student": student  # Full student details
+                        "student": student,  # Full student details
+                        "year": year_field
                     })
     
-    return matched_students if matched_students else []  # Return empty list instead of None for consistency
+    return matched_students
