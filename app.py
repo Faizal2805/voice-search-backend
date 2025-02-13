@@ -31,24 +31,6 @@ def process_voice():
 
     return jsonify({"students": students})
 
-@app.route('/extract_details', methods=['POST'])
-def extract_details():
-    """
-    Extract the department and year from text and return them.
-    """
-    data = request.get_json()
-    
-    if not data or 'text' not in data:
-        return jsonify({"error": "Try again"}), 400
-
-    user_input = data['text']
-    extracted_department, extracted_year = extract_department_year(user_input)
-
-    return jsonify({
-        "extracted_department": extracted_department,
-        "extracted_year": extracted_year
-    })
-
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 10000))
     app.run(host="0.0.0.0", port=port, debug=False)
