@@ -1,36 +1,39 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from database import get_students_by_name
-import re
+from database import get_students_by_name, extract_department_year
+from nlp_processing import extract_name
+import os
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for cross-origin requests
+CORS(app)
 
-def extract_name(text):
-    """
-    Extracts the name from user input using regex-based approach.
-    """
-    text = text.lower()
-    match = re.search(r"(?:i am looking for|find|search for|looking for)\s+([a-zA-Z]+(?:\s[a-zA-Z]+)*)", text, re.IGNORECASE)
-    return match.group(1) if match else None
+@app.route("/")
+def home():
+    return jsonify({"message": "Voice Search Backend is Running!"})
 
-@app.route("/search", methods=["POST"])
-def search_student():
-    data = request.json
-    user_input = data.get("text", "").strip()
+@app.route('/process_voice', methods=['POST'])
+def process_voice():
+    data = request.get_json()
     
-    if not user_input:
-        return jsonify({"error": "Empty input received"}), 400
-    
+    if not data or 'text' not in data:
+        return jsonify({"error": "Try again"}), 400
+
+    user_input = data['text']
     extracted_name = extract_name(user_input)
-    if not extracted_name:
-        return jsonify({"error": "No valid name found in input"}), 400
-    
-    matched_students = get_students_by_name(extracted_name)
-    if not matched_students:
-        return jsonify({"message": "No matching student found"}), 404
-    
-    return jsonify({"students": matched_students}), 200
+    extracted_department, extracted_year = extract_department_year(user_input)
+
+    students = get_students_by_name(extracted_name) if extracted_name else []
+
+    # Check all conditions before returning error
+    if not students and not extracted_department and not extracted_year:
+        return jsonify({"error": "No relevant data found"}), 404
+
+    return jsonify({
+        "students": students,
+        "extracted_department": extracted_department if extracted_department else None,
+        "extracted_year": extracted_year if extracted_year else None
+    })
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.getenv("PORT", 10000))
+    app.run(host="0.0.0.0", port=port, debug=False, threaded=True)
