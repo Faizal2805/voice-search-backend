@@ -23,14 +23,18 @@ def process_voice():
 
     user_input = data['text']
     extracted_name = extract_name(user_input)  
-
+    
+    print("Extracted Name:", extracted_name)  # Debugging output
+    
     if not extracted_name:
         return jsonify({"error": "No name found"}), 404
 
     students = get_students_by_name(extracted_name)
-
+    
+    print("Students Found:", students)  # Debugging output
+    
     return jsonify({"students": students})
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 10000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=port, debug=True)  # Set debug=True for more error logs
