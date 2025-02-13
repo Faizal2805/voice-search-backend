@@ -2,9 +2,15 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database import get_students_by_name
 from nlp_processing import extract_name, extract_department_year
+import os
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for cross-origin requests (Frontend on Vercel)
+
+# ✅ Root Route for Testing (Fixes 404 Not Found)
+@app.route("/")
+def home():
+    return jsonify({"message": "Backend is running successfully!"}), 200
 
 @app.route('/process_voice', methods=['POST'])
 def process_voice():
@@ -38,8 +44,6 @@ def filter_students():
 
     return jsonify({"department": extracted_department, "year": extracted_year})
 
-import os
 if __name__ == "__main__":
-    from os import getenv
-    port = int(getenv("PORT", 10000))  # Get PORT from environment or default to 10000
-    app.run(host="0.0.0.0", port=port, debug=False)  # Bind to all addresses
+    port = int(os.getenv("PORT", 10000))  # Use PORT from environment or default to 10000
+    app.run(host="0.0.0.0", port=port, debug=False)  # ✅ Disable Debug Mode in Deployment
