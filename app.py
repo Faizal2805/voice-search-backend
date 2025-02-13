@@ -39,7 +39,7 @@ def filter_students():
     return jsonify({"department": extracted_department, "year": extracted_year})
 
 import os
-
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))  # Get port from Render, default to 5000
-    app.run(host="0.0.0.0", port=port, debug=True)  # Bind to 0.0.0.0
+if __name__ == "__main__":
+    from os import getenv
+    port = int(getenv("PORT", 10000))  # Get PORT from environment or default to 10000
+    app.run(host="0.0.0.0", port=port, debug=False)  # Bind to all addresses
