@@ -22,9 +22,34 @@ def get_students_by_name(student_name):
             # Perform case-insensitive substring match (prefix, infix, midfix)
             for student in student_records:
                 if "NAME" in student and student_name in student["NAME"].strip().lower():
-                    matched_students.append({
-                        "student": student,  # Full student details
-                        "year": year_field
-                    })
+                    matched_students.append(student)  # Store only student data
     
     return matched_students
+
+def extract_department_year(user_input):
+    """
+    Extract department and year from the user input.
+    """
+    user_input = user_input.lower()
+    departments = {"ai&ds": ["aids", "ai and ds", "artificial intelligence and data science"]}
+    years = {"II": ["second year", "2nd year", "ii year"]}
+    
+    extracted_department, extracted_year = None, None
+    
+    for dept_key, dept_values in departments.items():
+        for alias in dept_values:
+            if alias in user_input:
+                extracted_department = dept_key.upper()
+                break
+        if extracted_department:
+            break
+    
+    for year_key, year_values in years.items():
+        for alias in year_values:
+            if alias in user_input:
+                extracted_year = year_key
+                break
+        if extracted_year:
+            break
+    
+    return extracted_department, extracted_year
