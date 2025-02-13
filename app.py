@@ -12,24 +12,19 @@ CORS(app)  # Enable CORS for cross-origin requests (Frontend on Vercel)
 def home():
     return jsonify({"message": "Backend is running successfully!"}), 200
 
-@app.route('/process_voice', methods=['POST'])
+@app.route("/process_voice", methods=["POST"])
 def process_voice():
-    data = request.json
-    user_input = data.get('text', '')
+    print("Headers:", request.headers)  # Debugging: Print headers
+    print("Raw Data:", request.data)  # Debugging: Print raw request body
+    print("JSON Data:", request.get_json())  # Debugging: Check parsed JSON
+    
+    data = request.get_json()
+    
+    if not data:
+        return jsonify({"error": "No data found"}), 400  # 400 Bad Request
+    
+    return jsonify({"message": "Received!", "data": data})
 
-    # Extract name using NLP
-    extracted_name = extract_name(user_input)
-
-    if not extracted_name:
-        return jsonify({"error": "Try again"}), 400  # Handle invalid input
-
-    # Retrieve student data based on name
-    students = get_students_by_name(extracted_name)
-
-    if not students:
-        return jsonify({"error": "No data found"}), 404  # No matching students
-
-    return jsonify({"students": students, "extracted_name": extracted_name})
 
 @app.route('/filter_students', methods=['POST'])
 def filter_students():
