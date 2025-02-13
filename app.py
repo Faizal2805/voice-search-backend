@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from database import get_students_by_name, extract_department_year
+from database import get_students_by_name
 from nlp_processing import extract_name
 import os
 
