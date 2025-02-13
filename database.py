@@ -27,4 +27,4 @@ def get_students_by_name(student_name):
                         "student": student  # Full student details
                     })
     
-    return matched_students if matched_students else None  # Return None when no match is found
+    return matched_students if matched_students else []  # Return empty list instead of None for consistency
