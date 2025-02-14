@@ -32,7 +32,7 @@ def get_student_details(student_name):
                     "block": s.get("BLOCK", "Unknown"),
                     "floor": s.get("FLOOR", "Unknown"),
                     "room_no": s.get("ROOM NO", "Unknown"),
-                    "department" : s.get("DEPARTMENT, ""Unknown"),
+                    "department" : s.get("DEPARTMENT", "Unknown"),
                     "year": year_field  # Include year for reference
                 }
                 for s in student_records
