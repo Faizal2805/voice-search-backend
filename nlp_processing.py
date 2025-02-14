@@ -1,9 +1,10 @@
 import re
 
 def extract_name(text):
-    name_pattern = r"\b[A-Z][a-z]+\s?[A-Z]?[a-z]*\b"
-    matches = re.findall(name_pattern, text.lower())
+    name_pattern = r"\b[A-Z]?[a-z]+\s?[A-Z]?[a-z]*\b"  # Allow names starting with lowercase
+    matches = re.findall(name_pattern, text, re.IGNORECASE)  # Case-insensitive search
     return matches[0] if matches else None
+
 
 def extract_department_year(text):
     department_keywords = {
