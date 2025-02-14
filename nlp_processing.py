@@ -1,9 +1,16 @@
 import re
 
 def extract_name(text):
-    name_pattern = r"\b[a-zA-Z]+\s?[a-zA-Z]*\b"  # Allows single or double names
+    """
+    Extracts a potential name from a given text using a more flexible approach.
+    Ensures case-insensitivity and avoids capturing question words.
+    """
+    # Define a regex to find words that are likely to be names
+    name_pattern = r"\b(?!where|is|who|what|when|why|how)[A-Za-z]+\b"
     matches = re.findall(name_pattern, text, re.IGNORECASE)  # Case-insensitive
-    return matches[0].capitalize() if matches else None  # Capitalize first letter
+
+    # Return the first meaningful word found, capitalized
+    return matches[-1].capitalize() if matches else None
 
 def extract_department_year(text):
     department_keywords = {
