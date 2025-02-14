@@ -32,7 +32,8 @@ def get_student_details(student_name):
                     "block": s.get("BLOCK", "Unknown"),
                     "floor": s.get("FLOOR", "Unknown"),
                     "room_no": s.get("ROOMNO", "Unknown"),
-                    "year": year_field  # Include year for reference
+                    "year": year_field,  # Include year for reference
+                    "name" : (f"Extracted Name: {extracted_name}")
                 }
                 for s in student_records
                 if "NAME" in s and student_name in s["NAME"].strip().lower()
@@ -58,8 +59,7 @@ def process_voice():
         return jsonify({"error": "Try again"}), 400
 
     user_input = data['text']
-    extracted_name = extract_name(user_input)
-    print(f"Extracted Name: {extracted_name}")  # Debugging
+    extracted_name = extract_name(user_input)  # Debugging
 
 
     if not extracted_name:
