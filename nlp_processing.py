@@ -2,7 +2,7 @@ import re
 
 def extract_name(text):
     name_pattern = r"\b[A-Z][a-z]+\s?[A-Z]?[a-z]*\b"
-    matches = re.findall(name_pattern, text)
+    matches = re.findall(name_pattern, text.lower())
     return matches[0] if matches else None
 
 def extract_department_year(text):
