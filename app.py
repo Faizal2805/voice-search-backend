@@ -59,7 +59,7 @@ def process_voice():
         return jsonify({"error": "Try again"}), 400
 
     user_input = data['text']
-    extracted_name = extract_name(user_input.lower())
+    extracted_name = extract_name(user_input)
 
     if not extracted_name:
         return jsonify({"error": "No name found"}), 404
