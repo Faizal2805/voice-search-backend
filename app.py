@@ -59,11 +59,13 @@ def process_voice():
 
     user_input = data['text']
     extracted_name = extract_name(user_input)
+    print(f"Extracted Name: {extracted_name}")  # Debugging
+
 
     if not extracted_name:
         return jsonify({"error": "No name found"}), 404
 
-    students = get_student_details(extracted_name.lower())  # Ensure lowercase matching
+    students = get_student_details(extracted_name)  # Ensure lowercase matching
     
     if not students:
         return jsonify({"error": "Student not found"}), 404
