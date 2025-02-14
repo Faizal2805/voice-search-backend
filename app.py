@@ -61,14 +61,14 @@ def process_voice():
     extracted_name = extract_name(user_input)
 
     if not extracted_name:
-        return jsonify({"error": "No name found"},  f"Extracted Name: {extracted_name}"), 404
+        return jsonify({"error": "No name found"}), 404
 
     students = get_student_details(extracted_name.lower())  # Ensure lowercase matching
     
     if not students:
-        return jsonify({"error": "Student not found"}, f"Extracted Name: {extracted_name}"), 404
+        return jsonify({"error": "Student not found"}), 404
     
-    return jsonify({"students": students}, f"Extracted Name: {extracted_name}")  # Debugging
+    return jsonify(students)
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 10000))
