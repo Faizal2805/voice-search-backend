@@ -68,7 +68,7 @@ def process_voice():
     if not students:
         return jsonify({"error": "Student not found"}), 404
     
-    return jsonify({"students": students}, f"Extracted Name: {extracted_name}"  # Debugging)
+    return jsonify({"students": students}, f"Extracted Name: {extracted_name}")  # Debugging
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 10000))
