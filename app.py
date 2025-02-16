@@ -68,7 +68,7 @@ def process_voice():
     students = get_student_details(extracted_name.lower())  # Ensure lowercase matching
     
     if not students:
-        return jsonify({"error": "Student not found"}), 404
+        return jsonify([]), 200  # Return an empty list with HTTP 200 OK
     
     return jsonify(students)
 
