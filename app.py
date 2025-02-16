@@ -34,7 +34,8 @@ def get_student_details(student_name):
                     "block": s.get("BLOCK", "Unknown"),
                     "floor": s.get("FLOOR", "Unknown"),
                     "room_no": s.get("ROOM NO", "Unknown"),
-                    "year": year_field  # Include year for reference
+                    "year": year_field,  # Include year for reference
+                    "department": s.get("DEPARTMENT", "Unknown")
                 }
                 for s in student_records
                 if "NAME" in s and student_name in s["NAME"].strip().lower()
