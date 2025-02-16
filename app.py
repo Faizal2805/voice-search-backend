@@ -7,7 +7,7 @@ from nlp_processing import extract_name
 app = Flask(__name__)
 
 # Allow CORS for a specific frontend URL
-CORS(app, resources={r"/*": {"origins": "https://eva-voice-assistant.vercel.app"}})
+CORS(app, resources={r"/*": {"origins": ["https://eva-voice-assistant.vercel.app", "https://id-preview--9353b29d-2b72-445f-ad80-8c3c458a24e8.lovable.app"]}})
 
 # Connect to MongoDB
 client = MongoClient("mongodb+srv://MongoVoiceAssistant1:MongoVoiceAssistant1@clusterdbvoicebot.vfdos.mongodb.net/?retryWrites=true&w=majority&appName=ClusterDbVoicebot")
