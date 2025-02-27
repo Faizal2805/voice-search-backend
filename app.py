@@ -17,17 +17,18 @@ collection = db["AIDS"]
 def get_student_details(student_name):
     """
     Search for a student using case-insensitive partial matching
-    and return their Block, Floor, and Room Number.
+    and return all instances across SECONDYEAR, THIRDYEAR, and FOURTHYEAR.
     """
     student_name = student_name.strip().lower()  # Normalize input
     year_fields = ["SECONDYEAR", "THIRDYEAR", "FOURTHYEAR"]
+    all_matched_students = []  # Store all matches from different years
 
     for year_field in year_fields:
         sample_doc = collection.find_one({year_field: {"$exists": True}})
         if sample_doc and year_field in sample_doc:
             student_records = sample_doc[year_field]
             
-            # Search for a matching student (case-insensitive)
+            # Search for matching students (case-insensitive)
             matched_students = [
                 {
                     "name": s["NAME"],
@@ -36,16 +37,15 @@ def get_student_details(student_name):
                     "room_no": s.get("ROOM NO", "Unknown"),
                     "year": year_field,  # Include year for reference
                     "department": s.get("DEPARTMENT", "Unknown"),
-                    "register_no": s.get("REG NO","Unknown")
+                    "register_no": s.get("REG NO", "Unknown")
                 }
                 for s in student_records
                 if "NAME" in s and student_name in s["NAME"].strip().lower()
             ]
-            
-            if matched_students:
-                return matched_students  # Return all matching students
 
-    return []  # Return empty list if no match found
+            all_matched_students.extend(matched_students)  # Append results
+
+    return all_matched_students  # Return all matched students
 
 @app.route("/")
 def home():
